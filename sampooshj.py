@@ -296,7 +296,7 @@ def render_guideline(surf1, surf2, ingredient_ranges, combo_guidelines):
 st.set_page_config(page_title="샴푸 배합비 설계 대시보드", layout="wide")
 
 st.markdown(
-    "<h2 style='margin-bottom:4px'>샴푸 배합비 설계 대시보드</h2>",
+    "<h2 style='margin-bottom:4px;text-align:center'>샴푸 배합비 설계 대시보드</h2>",
     unsafe_allow_html=True,
 )
 
@@ -314,17 +314,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ── 행 1: 계면활성제 1 | 계면활성제 2 ──
-st.markdown("**계면활성제**")
-s_col1, s_col2 = st.columns(2)
+# ── 4열: 계면활성제1 | 계면활성제2 | 폴리머 | 증점제 ──
+c1, c2, c3, c4 = st.columns(4)
 
-with s_col1:
+with c1:
+    st.markdown("**계면활성제 1**")
     surf1_opts = [None] + SURFACTANTS
     surf1 = st.selectbox(
         "계면활성제 1",
         surf1_opts,
         format_func=lambda x: "— 선택 —" if x is None else x,
         key="surf1",
+        label_visibility="collapsed",
     )
     if surf1 and surf1 in ingredient_ranges:
         lo, hi, mu = ingredient_ranges[surf1]
@@ -335,9 +336,11 @@ with s_col1:
     conc1 = st.number_input("투입량 (%)", min_value=0.0, max_value=50.0,
                              value=10.0, step=0.5, key="conc1")
 
-with s_col2:
+with c2:
+    st.markdown("**계면활성제 2**")
     surf2_opts = ["없음"] + [s for s in SURFACTANTS if s != surf1]
-    surf2_sel  = st.selectbox("계면활성제 2", surf2_opts, key="surf2")
+    surf2_sel  = st.selectbox("계면활성제 2", surf2_opts, key="surf2",
+                               label_visibility="collapsed")
     surf2 = None if surf2_sel == "없음" else surf2_sel
     if surf2 and surf2 in ingredient_ranges:
         lo, hi, mu = ingredient_ranges[surf2]
@@ -349,13 +352,10 @@ with s_col2:
                              value=10.0, step=0.5, key="conc2",
                              disabled=(surf2 is None))
 
-# ── 행 2: 폴리머 | 증점제 ──
-st.markdown("<div style='margin-top:8px'></div>", unsafe_allow_html=True)
-p_col, t_col = st.columns(2)
-
-with p_col:
+with c3:
     st.markdown("**폴리머**")
-    polymer_sel = st.selectbox("폴리머", ["없음"] + POLYMERS, key="polymer")
+    polymer_sel = st.selectbox("폴리머", ["없음"] + POLYMERS, key="polymer",
+                                label_visibility="collapsed")
     polymer = None if polymer_sel == "없음" else polymer_sel
     if polymer and polymer in ingredient_ranges:
         lo, hi, mu = ingredient_ranges[polymer]
@@ -367,9 +367,10 @@ with p_col:
                               value=2.0, step=0.1, key="pconc",
                               disabled=(polymer is None))
 
-with t_col:
+with c4:
     st.markdown("**증점제**")
-    thick_sel = st.selectbox("증점제", ["없음"] + THICKENERS, key="thickener")
+    thick_sel = st.selectbox("증점제", ["없음"] + THICKENERS, key="thickener",
+                              label_visibility="collapsed")
     thickener = None if thick_sel == "없음" else thick_sel
     if thickener and thickener in ingredient_ranges:
         lo, hi, mu = ingredient_ranges[thickener]
